@@ -53,6 +53,12 @@ export default function HostGame() {
     }
   }, []);
 
+  const send = useCallback((action) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ action }));
+    }
+  }, []);
+
   const startTimer = useCallback(
     (seconds) => {
       stopTimer();
@@ -61,33 +67,30 @@ export default function HostGame() {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             stopTimer();
+            // auto show results when time runs out
+            send("show_results");
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
     },
-    [stopTimer]
+    [stopTimer, send]
   );
 
   // WebSocket connection
   useEffect(() => {
     if (!roomId) return;
 
-    // const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    // const wsUrl = `${protocol}//${window.location.host}/ws/host/${roomId}`;
     const wsUrl = import.meta.env.DEV
       ? `ws://localhost:5173/ws/host/${roomId}`
       : `wss://quizhub.uz/ws/host/${roomId}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
-    // ws.onopen = () => setConnected(true);
     ws.onopen = () => {
       setConnected(true);
-      setTimeout(() => {
-        ws.send(JSON.stringify({ action: "init" }));
-      }, 500);
+      ws.send(JSON.stringify({ action: "init" }));
     };
     ws.onclose = () => setConnected(false);
     ws.onerror = () => setConnected(false);
@@ -113,14 +116,33 @@ export default function HostGame() {
           setQuestionResults(null);
           startTimer(data.question.time_limit);
           break;
+        // case "answer_received":
+        //   setAnswersCount(data.answers_count);
+        //   break;
         case "answer_received":
           setAnswersCount(data.answers_count);
+          // auto show results if all players answered
+          if (
+            data.answers_count >= data.player_count &&
+            data.player_count > 0
+          ) {
+            stopTimer();
+            setTimeout(() => send("show_results"), 500);
+          }
           break;
+        // case "question_results":
+        //   setPhase("results");
+        //   setQuestionResults(data);
+        //   setLeaderboard(data.leaderboard || []);
+        //   stopTimer();
+        //   break;
         case "question_results":
           setPhase("results");
           setQuestionResults(data);
           setLeaderboard(data.leaderboard || []);
           stopTimer();
+          // auto next question after 5 seconds
+          setTimeout(() => send("next_question"), 5000);
           break;
         case "game_over":
           setPhase("gameover");
@@ -136,11 +158,11 @@ export default function HostGame() {
     return () => ws.close();
   }, [roomId, startTimer, stopTimer]);
 
-  function send(action) {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ action }));
-    }
-  }
+  // function send(action) {
+  //   if (wsRef.current?.readyState === WebSocket.OPEN) {
+  //     wsRef.current.send(JSON.stringify({ action }));
+  //   }
+  // }
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -243,32 +265,6 @@ export default function HostGame() {
               )}
             </div>
 
-            {/* Controls
-            <div className="flex justify-center gap-3">
-              {!initialized ? (
-                <button
-                  onClick={() => send("init")}
-                  disabled={!connected}
-                  className="px-8 py-3 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white rounded-xl text-base font-semibold transition"
-                >
-                  Initialize Game
-                </button>
-              ) : (
-                <button
-                  onClick={() => send("next_question")}
-                  disabled={!connected || players.length === 0}
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-xl text-base font-semibold transition"
-                >
-                  Start Game
-                </button>
-              )}
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-base font-semibold transition"
-              >
-                Leave
-              </button>
-            </div> */}
             {/* Controls */}
             <div className="flex justify-center gap-3">
               {!initialized ? (
@@ -366,6 +362,7 @@ export default function HostGame() {
         )}
 
         {/* ── RESULTS ── */}
+        {/* ── RESULTS ── */}
         {phase === "results" && questionResults && (
           <div>
             <div className="text-center mb-6">
@@ -376,7 +373,66 @@ export default function HostGame() {
                 {questionResults.stats.correct_answers} /{" "}
                 {questionResults.stats.total_answers} correct
               </p>
+              <p className="text-slate-500 text-sm mt-1">
+                Next question in 5 seconds...
+              </p>
             </div>
+
+            {/* Answer distribution */}
+            {currentQuestion && (
+              <div className="max-w-lg mx-auto mb-6">
+                <h3 className="text-slate-400 text-sm mb-3 text-center">
+                  Answer breakdown
+                </h3>
+                <div className="space-y-2">
+                  {currentQuestion.options.map((opt, i) => {
+                    const count =
+                      questionResults.stats.option_counts?.[opt.id] || 0;
+                    const total = questionResults.stats.total_answers || 1;
+                    const pct = Math.round((count / total) * 100);
+                    const colors = [
+                      "bg-red-500",
+                      "bg-blue-500",
+                      "bg-yellow-500",
+                      "bg-green-500",
+                    ];
+                    const isCorrect =
+                      opt.id === questionResults.correct_option_id;
+                    return (
+                      <div
+                        key={opt.id}
+                        className={`p-3 rounded-xl border ${
+                          isCorrect
+                            ? "border-green-500/50 bg-green-500/10"
+                            : "border-slate-700 bg-slate-900"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span
+                            className={`text-sm font-medium ${
+                              isCorrect ? "text-green-400" : "text-white"
+                            }`}
+                          >
+                            {isCorrect && "✓ "}
+                            {opt.text}
+                          </span>
+                          <span className="text-slate-400 text-sm font-mono">
+                            {count} vote{count !== 1 ? "s" : ""} ({pct}%)
+                          </span>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full bg-slate-800 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full transition-all duration-500 ${colors[i]}`}
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Leaderboard */}
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-8 max-w-lg mx-auto">
@@ -415,13 +471,13 @@ export default function HostGame() {
               </div>
             </div>
 
-            {/* Controls */}
+            {/* Manual override */}
             <div className="flex justify-center">
               <button
                 onClick={() => send("next_question")}
                 className="px-8 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-base font-semibold transition"
               >
-                Next Question
+                Next Question Now
               </button>
             </div>
           </div>
@@ -479,10 +535,13 @@ export default function HostGame() {
                 View Details
               </button>
               <button
-                onClick={() => navigate("/dashboard")}
-                className="px-8 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-base font-semibold transition"
+                onClick={() => {
+                  send("close_game");
+                  navigate("/dashboard");
+                }}
+                className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-base font-semibold transition"
               >
-                Back to Dashboard
+                Close Game
               </button>
             </div>
           </div>

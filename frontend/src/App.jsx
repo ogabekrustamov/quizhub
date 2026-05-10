@@ -12,6 +12,7 @@ import JoinGame from "./pages/JoinGame";
 import PlayGame from "./pages/PlayGame";
 import Results from "./pages/Results";
 import Rooms from "./pages/Rooms";
+import History from "./pages/History";
 
 export default function App() {
   return (
@@ -24,6 +25,14 @@ export default function App() {
           <Route path="/join/:roomCode?" element={<JoinGame />} />
           <Route path="/game/:roomId" element={<PlayGame />} />
           <Route path="/results/:roomId" element={<Results />} />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <History />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/rooms"
             element={
