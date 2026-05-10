@@ -7,13 +7,13 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("");
   };
 
   return (
     <nav className="flex items-center justify-between px-8 py-4 bg-slate-900 border-b border-slate-800">
       <Link
-        to="/dashboard"
+        to="/"
         className="text-xl font-bold bg-gradient-to-r from-violet-500 to-cyan-400 bg-clip-text text-transparent"
       >
         QuizHub

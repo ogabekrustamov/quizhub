@@ -13,7 +13,6 @@ export default function useWebSocket(url) {
     wsRef.current = ws;
 
     ws.onopen = () => setConnected(true);
-
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
       setLastMessage(data);
