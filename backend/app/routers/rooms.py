@@ -193,3 +193,20 @@ async def end_room(
     await db.commit()
     await db.refresh(room)
     return room
+
+@router.delete("/{room_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_room(
+    room_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Room).where(Room.id == room_id, Room.host_id == current_user.id)
+    )
+    room = result.scalar_one_or_none()
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    if room.status == RoomStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="Cannot delete an active room")
+    await db.delete(room)
+    await db.commit()
