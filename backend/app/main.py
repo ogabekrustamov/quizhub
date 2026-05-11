@@ -8,7 +8,8 @@ from app.routers.rooms import router as rooms_router
 from app.routers.game import router as game_router
 from app.routers.leaderboard import router as leaderboard_router
 from app.routers.game_history import router as game_history_router
-from app.core.redis import close_redis
+from app.core.redis import close_redis, get_redis
+from app.rate_limiter import RateLimitMiddleware
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="QuizHub API", version="1.0.0", lifespan=lifespan)
+app.add_middleware(RateLimitMiddleware, redis_getter=get_redis)
 
 app.add_middleware(
     CORSMiddleware,
