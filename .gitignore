@@ -22,5 +22,8 @@ uv.lock
 Thumbs.db
 .idea
 
+
+docker-compose.override.yml
+
 # Observability data
 data/
