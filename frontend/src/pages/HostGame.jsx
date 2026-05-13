@@ -84,7 +84,7 @@ export default function HostGame() {
 
     const wsUrl = import.meta.env.DEV
       ? `ws://localhost:5173/ws/host/${roomId}`
-      : `wss://quizhub.uz/ws/host/${roomId}`;
+      : `wss://back.quizhub.uz/ws/host/${roomId}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
