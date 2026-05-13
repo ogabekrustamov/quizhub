@@ -53,7 +53,7 @@ export default function PlayGame() {
 
     const wsUrl = import.meta.env.DEV
       ? `ws://localhost:5173/ws/play/${roomId}`
-      : `wss://quizhub.uz/ws/play/${roomId}`;
+      : `wss://back.quizhub.uz/ws/play/${roomId}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -94,7 +94,14 @@ export default function PlayGame() {
           stopTimer();
           break;
 
+        // case "game_over":
+        //   setPhase("gameover");
+        //   setLeaderboard(data.leaderboard || []);
+        //   stopTimer();
+        //   break;
         case "game_over":
+          console.log("game_over data:", data);
+          console.log("leaderboard:", data.leaderboard);
           setPhase("gameover");
           setLeaderboard(data.leaderboard || []);
           stopTimer();
@@ -104,10 +111,10 @@ export default function PlayGame() {
           navigate("/");
           break;
 
-        // case "host_disconnected":
-        //   alert("Host disconnected");
-        //   navigate("/");
-        //   break;
+        case "host_disconnected":
+          alert("Host disconnected");
+          navigate("/");
+          break;
 
         case "error":
           alert(data.message);
@@ -341,99 +348,35 @@ export default function PlayGame() {
     );
   }
 
-  // ── GAME OVER ──
-  // if (phase === "gameover") {
-  //   const myRank = getMyRank();
-  //   return (
-  //     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-4">
-  //       <div className="w-full max-w-md text-center">
-  //         <p className="text-5xl mb-4">🏆</p>
-  //         <h2 className="text-3xl font-bold text-white mb-2">Game Over!</h2>
-
-  //         {myRank && (
-  //           <div className="mb-6">
-  //             <p className="text-slate-400">You finished</p>
-  //             <p className="text-5xl font-bold text-white mb-1">
-  //               #{myRank.rank}
-  //             </p>
-  //             <p className="text-cyan-400 font-mono font-bold text-2xl">
-  //               {myRank.score} pts
-  //             </p>
-  //           </div>
-  //         )}
-
-  //         {/* Final Leaderboard */}
-  //         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-6 text-left">
-  //           <div className="space-y-2">
-  //             {leaderboard.map((entry) => (
-  //               <div
-  //                 key={entry.player_id}
-  //                 className={`flex items-center justify-between py-3 px-4 rounded-xl ${
-  //                   entry.player_id === playerId
-  //                     ? "bg-violet-500/20 border border-violet-500/30"
-  //                     : "bg-slate-900"
-  //                 }`}
-  //               >
-  //                 <div className="flex items-center gap-3">
-  //                   <span
-  //                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-  //                       entry.rank === 1
-  //                         ? "bg-yellow-500 text-slate-900"
-  //                         : entry.rank === 2
-  //                         ? "bg-slate-400 text-slate-900"
-  //                         : entry.rank === 3
-  //                         ? "bg-amber-700 text-white"
-  //                         : "bg-slate-700 text-slate-300"
-  //                     }`}
-  //                   >
-  //                     {entry.rank === 1 ? "👑" : entry.rank}
-  //                   </span>
-  //                   <span className="text-white font-medium">
-  //                     {entry.name} {entry.player_id === playerId && "(you)"}
-  //                   </span>
-  //                 </div>
-  //                 <span className="text-cyan-400 font-mono font-bold">
-  //                   {entry.score}
-  //                 </span>
-  //               </div>
-  //             ))}
-  //           </div>
-  //         </div>
-
-  //         <button
-  //           onClick={() => navigate("/")}
-  //           className="px-8 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-base font-semibold transition"
-  //         >
-  //           Back to Home
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
   {
     /* ── GAME OVER ── */
   }
-  {
-    phase === "gameover" && (
+  // ── GAME OVER ──
+  if (phase === "gameover") {
+    const myRank = getMyRank();
+    return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <p className="text-5xl mb-4">🏆</p>
           <h2 className="text-3xl font-bold text-white mb-2">Game Over!</h2>
 
-          {getMyRank() && (
-            <div className="mb-6">
-              <p className="text-slate-400">You finished</p>
+          {myRank && (
+            <div className="mb-6 bg-slate-800 border border-slate-700 rounded-2xl p-5">
+              <p className="text-slate-400 text-sm mb-1">Your final position</p>
               <p className="text-5xl font-bold text-white mb-1">
-                #{getMyRank().rank}
+                #{myRank.rank}
               </p>
               <p className="text-cyan-400 font-mono font-bold text-2xl">
-                {getMyRank().score} pts
+                {myRank.score} pts
               </p>
             </div>
           )}
 
           {/* Final Leaderboard */}
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-6 text-left">
+            <h3 className="text-white font-semibold text-center mb-4">
+              Final Leaderboard
+            </h3>
             <div className="space-y-2">
               {leaderboard.map((entry) => (
                 <div
