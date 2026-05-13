@@ -139,6 +139,14 @@ async def host_websocket(websocket: WebSocket, room_id: str):
                     "leaderboard": leaderboard,
                 })
 
+            elif action == "close_game":
+                # notify all players to leave
+                await ws_manager.broadcast_to_players(room_id, {
+                    "event": "host_closed",
+                })
+                # cleanup Redis
+                await game_manager.cleanup_room(room_id)
+
     except WebSocketDisconnect:
         ws_manager.disconnect_host(room_id)
         await ws_manager.broadcast_to_players(room_id, {
