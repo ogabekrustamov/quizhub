@@ -100,6 +100,7 @@ services:
   loki:
     image: grafana/loki:2.9.0
     restart: always
+    user: "0"
     ports:
       - "3100:3100"
     volumes:
