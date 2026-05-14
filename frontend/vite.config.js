@@ -8,12 +8,12 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "https:/quizhub.uz",
+        target: "https://back.quizhub.uz",
         changeOrigin: true,
         secure: true,
       },
       "/ws": {
-        target: "wss://quizhub.uz",
+        target: "wss://back.quizhub.uz",
         ws: true,
         changeOrigin: true,
         secure: true,

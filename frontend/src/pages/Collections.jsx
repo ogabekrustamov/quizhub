@@ -109,18 +109,6 @@ export default function Collections() {
     }
   }
 
-  // async function handleHostGame(collectionId) {
-  //   try {
-  //     const res = await api.post("/rooms/", {
-  //       collection_id: collectionId,
-  //       save_as_collection: false,
-  //     });
-  //     navigate(`/host/${res.data.id}`);
-  //   } catch (err) {
-  //     alert(err.response?.data?.detail || "Failed to create room");
-  //   }
-  // }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900">
