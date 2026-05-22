@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../api/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrophy, faCrown, faChartBar } from "@fortawesome/free-solid-svg-icons";
 
 export default function Results() {
   const { roomId } = useParams();
@@ -84,7 +86,7 @@ export default function Results() {
           {/* Final Leaderboard */}
           <div>
             <h2 className="text-lg font-semibold text-white mb-4">
-              🏆 Final Leaderboard
+              <FontAwesomeIcon icon={faTrophy} className="mr-2 text-yellow-400" /> Final Leaderboard
             </h2>
             <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5">
               {summary.leaderboard.length === 0 ? (
@@ -108,7 +110,7 @@ export default function Results() {
                               : "bg-slate-700 text-slate-300 text-sm"
                           }`}
                         >
-                          {entry.rank === 1 ? "👑" : entry.rank}
+                          {entry.rank === 1 ? <FontAwesomeIcon icon={faCrown} /> : entry.rank}
                         </span>
                         <span className="text-white font-medium">
                           {entry.name}
@@ -127,7 +129,7 @@ export default function Results() {
           {/* Question Stats */}
           <div>
             <h2 className="text-lg font-semibold text-white mb-4">
-              📊 Question Stats
+              <FontAwesomeIcon icon={faChartBar} className="mr-2 text-cyan-400" /> Question Stats
             </h2>
             <div className="space-y-3">
               {summary.question_results.map((q) => {

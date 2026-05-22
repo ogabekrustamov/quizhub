@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTrophy, faCrown } from "@fortawesome/free-solid-svg-icons";
 
 export default function HostGame() {
   const { roomId } = useParams();
@@ -413,7 +415,7 @@ export default function HostGame() {
                               isCorrect ? "text-green-400" : "text-white"
                             }`}
                           >
-                            {isCorrect && "✓ "}
+                            {isCorrect && <FontAwesomeIcon icon={faCheck} className="mr-1" />}
                             {opt.text}
                           </span>
                           <span className="text-slate-400 text-sm font-mono">
@@ -487,7 +489,7 @@ export default function HostGame() {
         {phase === "gameover" && (
           <div className="text-center">
             <div className="mb-8">
-              <p className="text-5xl mb-4">🏆</p>
+              <div className="text-5xl mb-4"><FontAwesomeIcon icon={faTrophy} className="text-yellow-400" /></div>
               <h2 className="text-3xl font-bold text-white mb-2">Game Over!</h2>
               <p className="text-slate-400">Here are the final results</p>
             </div>
@@ -512,7 +514,7 @@ export default function HostGame() {
                             : "bg-slate-700 text-slate-300"
                         }`}
                       >
-                        {entry.rank === 1 ? "👑" : entry.rank}
+                        {entry.rank === 1 ? <FontAwesomeIcon icon={faCrown} /> : entry.rank}
                       </span>
                       <span className="text-white font-semibold text-lg">
                         {entry.name}
