@@ -1,0 +1,4 @@
+services:
+  backend-1:
+    ports:
+      - "8001:8000"

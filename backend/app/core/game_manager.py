@@ -188,38 +188,17 @@ class GameManager:
             "time_spent": round(time_spent, 2),
         }
 
-    # async def get_question_results(self, room_id: str, question_index: int) -> dict:
-    #     """Get answer stats for a question."""
-    #     r = await get_redis()
-    #     answers_raw = await r.hgetall(self._answers_key(room_id, question_index))
-    #     total = len(answers_raw)
-    #     correct = 0
-    #     for data in answers_raw.values():
-    #         a = json.loads(data)
-    #         if a["is_correct"]:
-    #             correct += 1
-    #     return {"total_answers": total, "correct_answers": correct}
-
     async def get_question_results(self, room_id: str, question_index: int) -> dict:
-    r = await get_redis()
-    answers_raw = await r.hgetall(self._answers_key(room_id, question_index))
-    total = len(answers_raw)
-    correct = 0
-
-    # count votes per option
-    option_counts = {}
-    for data in answers_raw.values():
-        a = json.loads(data)
-        if a["is_correct"]:
-            correct += 1
-        opt_id = a["option_id"]
-        option_counts[opt_id] = option_counts.get(opt_id, 0) + 1
-
-    return {
-        "total_answers": total,
-        "correct_answers": correct,
-        "option_counts": option_counts,
-    }
+        """Get answer stats for a question."""
+        r = await get_redis()
+        answers_raw = await r.hgetall(self._answers_key(room_id, question_index))
+        total = len(answers_raw)
+        correct = 0
+        for data in answers_raw.values():
+            a = json.loads(data)
+            if a["is_correct"]:
+                correct += 1
+        return {"total_answers": total, "correct_answers": correct}
 
     # ── Leaderboard ──
 
