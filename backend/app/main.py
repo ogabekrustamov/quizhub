@@ -46,6 +46,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="QuizHub API", version="1.0.0", lifespan=lifespan)
+app.add_middleware(RateLimitMiddleware, redis_getter=get_redis)
 
 app.add_middleware(RateLimitMiddleware, redis_getter=get_redis)
 app.add_middleware(

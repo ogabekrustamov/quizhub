@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import api from "../api/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileLines, faBook, faGamepad, faTrophy } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -68,13 +70,13 @@ export default function Dashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Questions" value={questions.length} emoji="📝" />
-          <StatCard label="Collections" value={collections.length} emoji="📚" />
-          <StatCard label="Rooms" value={rooms.length} emoji="🎮" />
+          <StatCard label="Questions" value={questions.length} icon={faFileLines} />
+          <StatCard label="Collections" value={collections.length} icon={faBook} />
+          <StatCard label="Rooms" value={rooms.length} icon={faGamepad} />
           <StatCard
             label="Games Played"
             value={rooms.filter((r) => r.status === "finished").length}
-            emoji="🏆"
+            icon={faTrophy}
           />
         </div>
 
@@ -82,7 +84,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Questions Block */}
           <BlockCard
-            emoji="📝"
+            icon={faFileLines}
             title="Questions"
             count={questions.length}
             color="violet"
@@ -102,7 +104,7 @@ export default function Dashboard() {
 
           {/* Collections Block */}
           <BlockCard
-            emoji="📚"
+            icon={faBook}
             title="Collections"
             count={collections.length}
             color="cyan"
@@ -122,7 +124,7 @@ export default function Dashboard() {
 
           {/* Rooms Block */}
           <BlockCard
-            emoji="🎮"
+            icon={faGamepad}
             title="Rooms"
             count={rooms.length}
             color="green"
@@ -145,7 +147,7 @@ export default function Dashboard() {
 
           {/* History Block */}
           <BlockCard
-            emoji="🏆"
+            icon={faTrophy}
             title="History"
             count={history.length}
             color="amber"
@@ -167,7 +169,7 @@ export default function Dashboard() {
   );
 }
 
-function BlockCard({ emoji, title, count, color, onClick, children }) {
+function BlockCard({ icon, title, count, color, onClick, children }) {
   const borders = {
     violet: "hover:border-violet-500/50",
     cyan: "hover:border-cyan-500/50",
@@ -180,6 +182,12 @@ function BlockCard({ emoji, title, count, color, onClick, children }) {
     green: "group-hover:text-green-400",
     amber: "group-hover:text-amber-400",
   };
+  const iconColors = {
+    violet: "text-violet-400",
+    cyan: "text-cyan-400",
+    green: "text-green-400",
+    amber: "text-amber-400",
+  };
 
   return (
     <div
@@ -187,7 +195,7 @@ function BlockCard({ emoji, title, count, color, onClick, children }) {
       className={`bg-slate-800 border border-slate-700 ${borders[color]} rounded-2xl p-6 cursor-pointer transition group`}
     >
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-3xl">{emoji}</span>
+        <span className="text-3xl"><FontAwesomeIcon icon={icon} className={iconColors[color]} /></span>
         <div>
           <h2
             className={`text-lg font-semibold text-white ${titles[color]} transition`}
@@ -204,10 +212,10 @@ function BlockCard({ emoji, title, count, color, onClick, children }) {
   );
 }
 
-function StatCard({ label, value, emoji }) {
+function StatCard({ label, value, icon }) {
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
-      <div className="text-2xl mb-2">{emoji}</div>
+      <div className="text-2xl mb-2"><FontAwesomeIcon icon={icon} className="text-slate-400" /></div>
       <div className="text-2xl font-bold text-white">{value}</div>
       <div className="text-slate-400 text-sm">{label}</div>
     </div>

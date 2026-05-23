@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../api/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGamepad, faCrown } from "@fortawesome/free-solid-svg-icons";
 
 export default function History() {
   const [history, setHistory] = useState([]);
@@ -52,7 +54,7 @@ export default function History() {
 
         {history.length === 0 ? (
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-12 text-center">
-            <p className="text-5xl mb-4">🎮</p>
+            <div className="text-5xl mb-4"><FontAwesomeIcon icon={faGamepad} className="text-slate-500" /></div>
             <p className="text-slate-400 text-lg mb-2">No games played yet</p>
             <p className="text-slate-500 text-sm mb-6">
               Host a game and complete it to see results here
@@ -106,7 +108,7 @@ export default function History() {
                               : "bg-amber-700/20 text-amber-600"
                           }`}
                         >
-                          {i === 0 ? "👑" : `#${i + 1}`} {p.name} · {p.score}
+                          {i === 0 ? <FontAwesomeIcon icon={faCrown} /> : `#${i + 1}`} {p.name} · {p.score}
                         </span>
                       ))}
                     </div>

@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBoltLightning,
+  faClock,
+  faTrophy,
+  faMobileScreen,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -43,7 +50,9 @@ export default function Landing() {
 
       {/* Hero */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
-        <div className="mb-6 text-5xl">🧠</div>
+        <div className="mb-6 mt-6 text-5xl">
+          <FontAwesomeIcon icon={faBoltLightning} className="text-violet-500" />
+        </div>
         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
           Live quizzes,
           <br />
@@ -69,17 +78,20 @@ export default function Landing() {
         {/* Features */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl w-full mt-4">
           <FeatureCard
-            emoji="⚡"
+            icon={faClock}
+            iconClassName="text-violet-500"
             title="Real-time"
             desc="WebSocket-powered live gameplay"
           />
           <FeatureCard
-            emoji="🏆"
+            icon={faTrophy}
+            iconClassName="text-cyan-400"
             title="Leaderboards"
             desc="Instant scoring and rankings"
           />
           <FeatureCard
-            emoji="📱"
+            icon={faMobileScreen}
+            iconClassName="text-violet-500"
             title="No app needed"
             desc="Play from any browser"
           />
@@ -119,10 +131,12 @@ function JoinForm() {
   );
 }
 
-function FeatureCard({ emoji, title, desc }) {
+function FeatureCard({ icon, iconClassName, title, desc }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
-      <div className="text-3xl mb-3">{emoji}</div>
+      <div className="text-3xl mb-3">
+        <FontAwesomeIcon icon={icon} className={iconClassName} />
+      </div>
       <h3 className="text-white font-semibold mb-1">{title}</h3>
       <p className="text-slate-400 text-sm">{desc}</p>
     </div>

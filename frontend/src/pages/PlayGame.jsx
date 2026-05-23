@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark, faTrophy, faCrown } from "@fortawesome/free-solid-svg-icons";
 
 export default function PlayGame() {
   const { roomId } = useParams();
@@ -266,7 +268,9 @@ export default function PlayGame() {
               answerResult.is_correct ? "bg-green-500/20" : "bg-red-500/20"
             }`}
           >
-            {answerResult.is_correct ? "✅" : "❌"}
+            {answerResult.is_correct
+              ? <FontAwesomeIcon icon={faCheck} className="text-green-400" />
+              : <FontAwesomeIcon icon={faXmark} className="text-red-400" />}
           </div>
           <h2
             className={`text-3xl font-bold mb-2 ${
@@ -357,7 +361,7 @@ export default function PlayGame() {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <p className="text-5xl mb-4">🏆</p>
+          <div className="text-5xl mb-4"><FontAwesomeIcon icon={faTrophy} className="text-yellow-400" /></div>
           <h2 className="text-3xl font-bold text-white mb-2">Game Over!</h2>
 
           {myRank && (
@@ -399,7 +403,7 @@ export default function PlayGame() {
                           : "bg-slate-700 text-slate-300"
                       }`}
                     >
-                      {entry.rank === 1 ? "👑" : entry.rank}
+                      {entry.rank === 1 ? <FontAwesomeIcon icon={faCrown} /> : entry.rank}
                     </span>
                     <span className="text-white font-medium">
                       {entry.name} {entry.player_id === playerId && "(you)"}
